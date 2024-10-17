@@ -1,4 +1,9 @@
 # brzozowski-derivative
 
 example:
-prettyPrint $ derivativeWithRespectTo 'a' $ KleeneClosure (Concatenation [Symbol 'a', KleeneClosure (stringConcatenation "ab")])
+
+Input:
+`prettyPrint $ derivativeWithRespectTo 'a' $ KleeneClosure (Concatenation [Symbol 'a', KleeneClosure (stringConcatenation "ab")])`
+
+Output:
+`(ab)*(a(ab)*)*`

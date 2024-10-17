@@ -79,14 +79,17 @@ simplifyElementsOf = map simplify
 
 
 prettyPrint :: RegEx -> String
-prettyPrint re = case re of
-    EmptySet         -> "∅"
-    Lambda           -> "λ"
-    Symbol c         -> [c]
-    Concatenation rs -> concatMap prettyPrint rs
-    Sum rs           -> "(" ++ join " + " (map prettyPrint rs) ++ ")"
-    KleeneClosure r -> "(" ++ prettyPrint r ++ ")*"
+prettyPrint re = prettyPrint' re False
+  where
+    prettyPrint' :: RegEx -> Bool -> String
+    prettyPrint' EmptySet _           = "∅"
+    prettyPrint' Lambda _             = "λ"
+    prettyPrint' (Symbol c) _         = [c]
+    prettyPrint' (Concatenation rs) _ = concatMap (`prettyPrint'` True) rs
+    prettyPrint' (Sum rs) True        = "(" ++ join " + " (map (`prettyPrint'` False) rs) ++ ")"
+    prettyPrint' (Sum rs) False       = join " + " (map (`prettyPrint'` False) rs)
+    prettyPrint' (KleeneClosure r) _  = "(" ++ prettyPrint' r False ++ ")*"
 
 
 join :: String -> [String] -> String
-join sep xs = foldr (\a b -> a ++ if b=="" then b else sep ++ b) "" xs
+join sep xs = foldl (\a b -> if a == "" then b else a++sep++b) "" xs 

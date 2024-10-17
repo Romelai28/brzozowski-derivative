@@ -53,7 +53,7 @@ simplify re = case re of
     Concatenation rs ->
         let simplifiedRs = simplifyElementsOf rs
             filteredRs = filter (/= Lambda) simplifiedRs
-        in  case filteredRs of
+        in case filteredRs of
             []   -> Lambda  -- Si el filter borro todo, es que solo había lambdas.
             [re] -> simplify re
             _    -> if any (== EmptySet) filteredRs
@@ -84,7 +84,7 @@ prettyPrint re = case re of
     Lambda           -> "λ"
     Symbol c         -> [c]
     Concatenation rs -> concatMap prettyPrint rs
-    Sum rs           -> join " + " (map prettyPrint rs)
+    Sum rs           -> "(" ++ join " + " (map prettyPrint rs) ++ ")"
     KleeneClosure r -> "(" ++ prettyPrint r ++ ")*"
 
 

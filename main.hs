@@ -41,7 +41,9 @@ derivativeWithRespectTo c re = simplify $ case re of
     Sum rs                -> Sum $ map derivative rs
     KleeneClosure re      -> Concatenation [derivative re, KleeneClosure re]
     where
-        derivative = simplify . derivativeWithRespectTo c
+        derivative :: RegEx -> RegEx
+        derivative = derivativeWithRespectTo c
+        epsilonOperator :: RegEx -> RegEx
         epsilonOperator re = if hasLambda re then Lambda else EmptySet 
 
 
@@ -88,7 +90,7 @@ prettyPrint re = prettyPrint' re False
     prettyPrint' (Concatenation rs) _ = concatMap (`prettyPrint'` True) rs
     prettyPrint' (Sum rs) True        = "(" ++ join " + " (map (`prettyPrint'` False) rs) ++ ")"
     prettyPrint' (Sum rs) False       = join " + " (map (`prettyPrint'` False) rs)
-    prettyPrint' (KleeneClosure r) _  = "(" ++ prettyPrint' r False ++ ")*"
+    prettyPrint' (KleeneClosure re) _ = "(" ++ prettyPrint' re False ++ ")*"
 
 
 join :: String -> [String] -> String
